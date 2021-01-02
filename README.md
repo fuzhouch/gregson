@@ -1,18 +1,64 @@
-# Gregson: A web development utility library with attitude
+# Gregson: A REST API Server Builder
 
-A collection of tools that helps creating a standardized web application.
-It is not a "framework", but a set of tools to integrate existing
-libraries with a set of pre-defined default configuration, which gives
-a consistent behavior when building a web application.
+This library provides a set of functions to create an web app, which
+provides functionalities that can be accessed via a command line client
+(behave like [awscli](https://github.com/aws/aws-cli)), or works with
+an HTML5 Single Page Application.
 
-## Dependencies
+Gregson does not aim to be a "framework" but a utility library to
+use existing popular Go libraries, with a set of configured settings
+to make web app reasonable to diagnose after it's deployed in
+production.
 
-Gregson is built on the following libraries:
+Gregson is built on the popular Golang libraries like
+[Gin](https://github.com/gin-gonic/gin),
+[Zerolog](https://github.com/rs/zerolog), and
+[Prometheus](https://github.com/prometheus/client_golang). Given
+it's not framework, it directly expose data structures from the
+libraries it references, with a purpose to avoid introduce new concepts
+in code.
 
-- [Gin](https://github.com/gin-gonic/gin)
-- [Zerolog](https://github.com/rs/zerolog)
+# Quick start
 
-# About this name
+Gregson is built upon Go 1.14 or above, supporting ``go.mod`` mode only.
+To reference Gregson, run commands below from your Go project.
+
+```bash
+    go get -v https://github.com/fuzhouch/gregson
+```
+
+A minimized example looks like below. It forces applying global logging
+settings via ``InitGlobalZeroLog()``, then creates an ``gin.Engine``
+object with ``zerolog`` and ``Prometheus`` hooked. Once ``g.Run()``
+is called, developer can immediately see JSON log written in io.Stderr.
+They can also use ``/metrics`` path to access Prometheus metrics.
+
+```go
+
+package main
+import (
+    "io"
+
+    "github.com/gin-gonic/go"
+    "github.com/fuzhouch/gregson"
+)
+
+func main() {
+    gregson.InitGlobalZeroLog(io.Stderr)
+    s := gregson.NewSetting()
+    g := gregson.NewGin(s) // Zerolog and Prometheus are integrated.
+
+    g.GET("/", func(c *gin.Context) {
+        c.String(http.StatusOK, "")
+    })
+    g.Run() // Listen and serve on 0.0.0.0:8080
+}
+```
+
+Developer can use ``gregson.Setting`` structure to configure how
+``gin.Engine`` object is created.
+
+# About the name
 
 The name of this library, "Gregson", refers to
 [Tobias Gregson](https://www.arthur-conan-doyle.com/index.php/Tobias_Gregson),
@@ -22,7 +68,7 @@ case.  He created his own theory to explain what happens, though
 mostly wrong, which was named by Sherlock Holmes as "the smartest
 detective in Scottland Yard".
 
-# It appears hard to customize... yes, it's by design
+## If you find it hard to customize... yes, it's by design
 
 I pick name "Gregson" to reflect what we may find in this library: it
 has its own attitude to select library and options which is needed in web
@@ -42,4 +88,4 @@ be accepted either.
 
 The best option for these requests, is to copy useful snippets
 from [Gregson](https://github.com/fuzhouch/gregson) to your code base.
-Don't worry about legal issue. It's completely allowed via MIT License.
+It's completely allowed by MIT License.

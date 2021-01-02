@@ -121,7 +121,7 @@ func TestGinAcceptZeroLog(t *testing.T) {
 	// A router binds default logger
 	gin.SetMode(gin.ReleaseMode)
 	r := gin.Default()
-	SetGlobalZeroLogToGin(r)
+	HookGlobalZeroLog(r)
 	r.GET("/testpath", func(c *gin.Context) {
 		c.String(http.StatusMultiStatus, "")
 	})
@@ -229,7 +229,7 @@ func TestGinNoLogAfterSettingRouter(t *testing.T) {
 	r.GET("/", func(c *gin.Context) {
 		c.String(http.StatusOK, "")
 	})
-	SetGlobalZeroLogToGin(r) // This call takes no effect.
+	HookGlobalZeroLog(r) // This call takes no effect.
 
 	// Perform an HTTP call
 	w := httptest.NewRecorder()
