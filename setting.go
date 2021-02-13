@@ -1,8 +1,5 @@
 package gregson
 
-type JWTSetting struct {
-}
-
 // Setting specifies configuration when building web app.
 type Setting struct {
 	AppName    string
